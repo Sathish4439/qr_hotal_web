@@ -1,23 +1,56 @@
+import 'package:ecommerce_flutter/core/services/endpoints.dart';
+import 'package:ecommerce_flutter/core/services/notification_service.dart';
+import 'package:ecommerce_flutter/core/theme/app_theme.dart';
+import 'package:ecommerce_flutter/feature/home/view/tabbar.dart';
+import 'package:ecommerce_flutter/utils/routes.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:ecommerce_flutter/routes.dart';
-import 'package:ecommerce_flutter/screens/tabbar/tabbar.dart';
-import 'package:ecommerce_flutter/theme.dart';
+import 'package:get/get.dart';
+import 'package:toastification/toastification.dart';
 
-// Global variables so you can use them anywhere
-String? hotelId;
+// Global variable to use anywhere
 String? tableId;
 
-void main() {
+// Background FCM handler
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint("Handling a background message: ${message.messageId}");
+}
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Extract tableId from URL (for web)
   _extractHotelAndTable();
+
+  // Initialize Firebase
+  // if (Firebase.apps.isEmpty) {
+  //   await Firebase.initializeApp(
+  //     options: const FirebaseOptions(
+  //       apiKey: EndPoints.apiKey,
+  //       projectId: EndPoints.projectId,
+  //       storageBucket: EndPoints.storageBucket,
+  //       messagingSenderId: EndPoints.messagingSenderId,
+  //       appId: EndPoints.appId,
+  //       measurementId: EndPoints.measurementId,
+  //     ),
+  //   );
+  // }
+
+  // FCM background handler (works only on supported platforms)
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Initialize push notifications safely
+  PushService().initFCM(); // ⚡ Make sure initFCM() is async and web-safe
+
   runApp(const EcommerceFlutterApp());
 }
 
+// Extract tableId from URL query parameter (web)
 void _extractHotelAndTable() {
-  final uri = Uri.base; // Current page URL
-  hotelId = uri.queryParameters['hotelId'];
-  tableId = uri.queryParameters['tableId'];
-
-  debugPrint("Hotel ID: $hotelId");
+  final uri = Uri.base;
+  tableId = uri.queryParameters['tableId'] ?? '';
   debugPrint("Table ID: $tableId");
 }
 
@@ -26,12 +59,14 @@ class EcommerceFlutterApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'DhiGrowth',
-      theme: appTheme(),
-      routes: routes,
-      debugShowCheckedModeBanner: false,
-      home: const FRTabbarScreen(),
+    return ToastificationWrapper(
+      child: GetMaterialApp(
+        title: 'DhiGrowth',
+        theme: AppTheme.lightTheme,
+        routes: routes,
+        debugShowCheckedModeBanner: false,
+        home: const FRTabbarScreen(),
+      ),
     );
   }
 }

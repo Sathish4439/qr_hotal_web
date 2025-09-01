@@ -23,6 +23,12 @@
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="theme-color" content="#ffffff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DhiGrowth">
+<link rel="apple-touch-icon" href="icons/Icon-192.png">
+
   <meta name="apple-mobile-web-app-title" content="DhiGrowth">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
@@ -36,6 +42,25 @@
     // The value below is injected by flutter build, do not touch.
     var serviceWorkerVersion = null;
   </script>
+  <script type="module">
+  // Import Firebase SDKs
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+  import { getMessaging } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging.js";
+
+  const firebaseConfig = {
+  apiKey: "AIzaSyDjmU9b7trS15dH-amLSYWf349Q0EIpbS0",
+  authDomain: "dhigrowth-hotal-managamenet.firebaseapp.com",
+  projectId: "dhigrowth-hotal-managamenet",
+  storageBucket: "dhigrowth-hotal-managamenet.firebasestorage.app",
+  messagingSenderId: "24097679071",
+  appId: "1:24097679071:web:09dce1e92aab1cf7e4ab6a",
+  measurementId: "G-SVN25C6H0P"
+};
+
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+</script>
+
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
 </head>
