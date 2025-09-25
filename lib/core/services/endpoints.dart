@@ -1,5 +1,5 @@
 class EndPoints {
-  static const String baseUrl = "http://192.168.31.86:5000/api/admin";
+  static const String baseUrl = "http://localhost:5000/api/admin";
 
   //--------------------customer----------
 //menu

@@ -1,17 +1,16 @@
 {
     "version": "0.2.0",
     "configurations": [
-        {
-            "name": "frontend (web fixed port)",
-            "request": "launch",
-            "type": "dart",
-            "args": [
-                "-d",
-                "web-server",
-                "--web-hostname=192.168.1.50",
-                "--web-port=8080"
-            ]
-        },
+{
+      "name": "Flutter Chrome",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "-d",
+        "chrome"
+      ]
+    },
         {
             "name": "frontend",
             "request": "launch",

@@ -30,16 +30,22 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
   @override
   void initState() {
     super.initState();
-    controller.calculatePrice(double.parse(widget.product.price));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.totalPrice.value = 0;
+      controller.selectedOptions.clear();
+      controller.calculatePrice(double.parse(widget.product.price));
+    });
 
     _scrollController.addListener(() {
-      setState(() {
-        if (_scrollController.offset > 100) {
-          _appBarOpacity = 1.0;
-        } else {
-          _appBarOpacity = _scrollController.offset / 100;
-        }
-      });
+      final newOpacity =
+          _scrollController.offset > 100 ? 1.0 : _scrollController.offset / 100;
+
+      if (newOpacity != _appBarOpacity) {
+        setState(() {
+          _appBarOpacity = newOpacity;
+        });
+      }
     });
   }
 
@@ -54,28 +60,13 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     final product = widget.product;
 
     return Scaffold(
-      appBar: FRAppBar.defaultAppBar(
-        context,
-        title: 'Details',
-        actions: [
-          GestureDetector(
-              onTap: () {
-                Get.to(() => CartScreen());
-              },
-              child: GradientIcon(
-                Icons.shopping_bag_rounded,
-                size: 40,
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    AppColors.secondary,
-                    AppColors.secondaryLight,
-                  ],
-                ),
-              ))
-        ],
-      ),
+      // appBar: FRAppBar.defaultAppBar(
+      //   context,
+      //   title: 'Details',
+      //   actions: [
+
+      //   ],
+      // ),
       body: SafeArea(
         child: Stack(
           children: [
@@ -510,8 +501,9 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     return SizedBox(
       width: 180,
       child: ElevatedButton(
-        onPressed: () {
-          controller.addToCart(widget.product);
+        onPressed: () async {
+          print("tabbed");
+          await controller.addToCart(widget.product, controller.quantity.value, controller.selectedOptions ,controller.totalPrice.value);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.secondaryLight,

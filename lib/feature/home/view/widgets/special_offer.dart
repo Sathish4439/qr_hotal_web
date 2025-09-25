@@ -120,8 +120,7 @@ class _SpecialOffersState extends State<SpecialOffers> {
                 itemBuilder: ((context, index) {
                   final data = controller.categories[index];
 
-                  print("controller.menuList ${controller.menuList.length}");
-                  return CategoryWid(data: data);
+                      return CategoryWid(data: data);
                   //  CategoryWid(data: data);
                 }),
               ))

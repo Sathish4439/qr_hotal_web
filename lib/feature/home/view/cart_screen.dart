@@ -35,6 +35,7 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
       appBar: FRAppBar.defaultAppBar(
         title: "My Cart",
+        showBackButton: false,
         context,
         actions: [
           IconButton(

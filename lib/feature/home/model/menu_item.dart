@@ -10,7 +10,9 @@ class MenuItem {
   final DateTime createdAt;
   final List<MenuOption> options;
   final List<OrderItem> orderItems;
-  final String? notes; // nullable is fine
+  final String? notes;
+  bool? loading = false;
+  // nullable is fine
 
   MenuItem({
     required this.id,
@@ -23,6 +25,7 @@ class MenuItem {
     this.options = const [],
     this.orderItems = const [],
     this.notes,
+    this.loading,
   });
 
   /// ✅ Factory constructor to create object from JSON

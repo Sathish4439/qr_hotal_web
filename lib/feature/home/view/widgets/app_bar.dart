@@ -3,20 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 abstract class FRAppBar {
-  static PreferredSizeWidget defaultAppBar(
-    BuildContext context, {
-    String title = '',
-    List<Widget>? actions,
-  }) {
+  static PreferredSizeWidget defaultAppBar(BuildContext context,
+      {String title = '', List<Widget>? actions, bool? showBackButton}) {
     return AppBar(
       backgroundColor: AppColors.textWhite,
-      leading: IconButton(
-        onPressed: (() => Get.back()),
-        icon: Image.asset(
-          'assets/icons/back@2x.png',
-          scale: 2.0,
-        ),
-      ),
+      leading: showBackButton != null && showBackButton == true
+          ? IconButton(
+              onPressed: (() => Get.back()),
+              icon: Image.asset(
+                'assets/icons/back@2x.png',
+                scale: 2.0,
+              ),
+            )
+          : const SizedBox.shrink(),
       title: Text(
         title,
         style: const TextStyle(

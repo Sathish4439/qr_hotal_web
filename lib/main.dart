@@ -2,6 +2,7 @@ import 'package:ecommerce_flutter/core/services/endpoints.dart';
 import 'package:ecommerce_flutter/core/services/notification_service.dart';
 import 'package:ecommerce_flutter/core/theme/app_theme.dart';
 import 'package:ecommerce_flutter/feature/home/view/tabbar.dart';
+import 'package:ecommerce_flutter/firebase_options.dart';
 import 'package:ecommerce_flutter/utils/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -20,29 +21,13 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Extract tableId from URL (for web)
   _extractHotelAndTable();
+  await Firebase.initializeApp(
+    options:
+        DefaultFirebaseOptions.currentPlatform, // from firebase_options.dart
+  );
 
-  // Initialize Firebase
-  // if (Firebase.apps.isEmpty) {
-  //   await Firebase.initializeApp(
-  //     options: const FirebaseOptions(
-  //       apiKey: EndPoints.apiKey,
-  //       projectId: EndPoints.projectId,
-  //       storageBucket: EndPoints.storageBucket,
-  //       messagingSenderId: EndPoints.messagingSenderId,
-  //       appId: EndPoints.appId,
-  //       measurementId: EndPoints.measurementId,
-  //     ),
-  //   );
-  // }
-
-  // FCM background handler (works only on supported platforms)
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  // Initialize push notifications safely
-  PushService().initFCM(); // ⚡ Make sure initFCM() is async and web-safe
+  await PushService().initFCM();
 
   runApp(const EcommerceFlutterApp());
 }

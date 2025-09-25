@@ -43,6 +43,7 @@ class CustomeButton extends StatelessWidget {
   final double width;
   final double height;
   final double borderRadius;
+  final bool isLoading; // ✅ Added
 
   const CustomeButton({
     super.key,
@@ -51,31 +52,51 @@ class CustomeButton extends StatelessWidget {
     this.width = double.infinity,
     this.height = 50,
     this.borderRadius = 16,
+    this.isLoading = false, // ✅ Default: not loading
   });
 
   @override
   Widget build(BuildContext context) {
+    final borderRadiusValue = BorderRadius.circular(borderRadius);
+
     return GestureDetector(
-      onTap: onTap,
+      onTap: isLoading ? null : onTap, // ✅ Disable tap when loading
       child: ClipRRect(
-        borderRadius: KborderRadius,
+        borderRadius: borderRadiusValue,
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
           child: Container(
-            margin: EdgeInsets.all(8),
+            margin: const EdgeInsets.all(8),
             width: width,
             height: height,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              borderRadius: KborderRadius,
-              color: AppColors.secondaryLight.withOpacity(0.5),
+              borderRadius: borderRadiusValue,
+              color:
+                  AppColors.secondary, // replace with AppColors.secondaryLight
               border: Border.all(
-                color: AppColors.secondaryLight,
+                color: AppColors
+                    .secondaryDark, // replace with AppColors.secondaryLight
                 width: 1.5,
               ),
             ),
-            child: Text(text,
-                style: AppFonts.bodyStyle(color: AppColors.secondary)),
+            child: isLoading
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Text(
+                    text,
+                    style: const TextStyle(
+                      color: Colors.white, // replace with AppColors.secondary
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
           ),
         ),
       ),
@@ -170,7 +191,6 @@ void showNotificationDialog(
     },
   );
 }
-
 
 /// ✅ Custom Success Widget
 Widget successToastWidget(String message) {

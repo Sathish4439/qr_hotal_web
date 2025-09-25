@@ -61,6 +61,9 @@ class HomeController extends GetxController {
           await SecureStorageHelper.readValue(SecureStorageHelper.fcmToken);
 
       var data = {"fcmToken": token};
+
+     
+
       var res = await api.post(EndPoints.createCustomer, data: data);
 
       if (res.statusCode == 200 && res.data['success']) {

@@ -28,24 +28,43 @@ class OrderController extends GetxController {
   }
 
   void calculateTotalCartPrice() {
-    print("calculateTotalCartPrice ");
     double sum = 0.0;
+    print("🛒 Starting calculation of total cart price...");
+
+    print("📦 Cart contains ${cartItems.length} items");
 
     for (var item in cartItems) {
+      print(
+          "➡️ Processing item: ${item.menuItem.name}, Quantity: ${item.quantity}");
+
       // Each item's options price
       double optionsPrice = item.options.fold(
         0.0,
-        (total, option) => total + (double.tryParse(option.extraPrice) ?? 0.0),
+        (total, option) {
+          double parsed = double.tryParse(option.extraPrice) ?? 0.0;
+          print(
+              "   🔹 Option: ${option.name}, Extra Price: ${option.extraPrice}, Parsed: $parsed");
+          return total + parsed;
+        },
       );
 
+      print("   ✅ Total options price for item: $optionsPrice");
+      print("   ✅ Total options price for item: ${item.totalPrice}");
+
       // Item total = (base price + options price) * quantity
-      sum += (item.totalPrice + optionsPrice) * item.quantity;
+      double itemTotal = (item.totalPrice + optionsPrice) * item.quantity;
+      print(
+          "   🧮 Item total = (Base: ${item.totalPrice} + Options: $optionsPrice) × Quantity: ${item.quantity} = $itemTotal");
+
+      sum += itemTotal;
+      print("   💰 Running sum: $sum");
     }
 
     totalPrice.value = sum;
+    print("✅ Final total cart price: ${totalPrice.value}");
 
-    print(" totalPrice.value ${totalPrice.value}");
     totalPrice.refresh();
+    print("🔄 totalPrice refreshed");
   }
 
   // ✅ Add/Remove options
@@ -83,7 +102,9 @@ class OrderController extends GetxController {
   }
 
   // ✅ Add to cart API
-  Future<void> addToCart(MenuItem product) async {
+  Future<void> addToCart(MenuItem product, int qty,
+      List<MenuOption> selectedOptions, double totalPrice) async {
+    print("addToCart method called ");
     try {
       var customerId =
           await SecureStorageHelper.readValue(SecureStorageHelper.keyUserId);
@@ -94,10 +115,12 @@ class OrderController extends GetxController {
         "customerId": int.parse(customerId),
         "menu_id": product.id,
         "price": product.price,
-        "quantity": quantity.value,
+        "quantity": qty,
         "options": selectedOptions.map((o) => o.toJson()).toList(),
-        "total_price": totalPrice.value,
+        "total_price": totalPrice,
       };
+
+      print(body);
 
       var res = await api.post(EndPoints.createCart, data: body);
 
@@ -110,7 +133,7 @@ class OrderController extends GetxController {
     } catch (e) {
       print("Error adding to cart: $e");
     } finally {
-      calculateTotalCartPrice();
+      // calculateTotalCartPrice();
     }
   }
 
@@ -159,7 +182,7 @@ class OrderController extends GetxController {
     } catch (e) {
       print("Error updating cart: $e");
     } finally {
-      calculateTotalCartPrice();
+      //  calculateTotalCartPrice();
     }
   }
 

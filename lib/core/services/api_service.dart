@@ -7,19 +7,36 @@ class ApiService {
   ApiService()
       : _dio = Dio(BaseOptions(
           baseUrl: EndPoints.baseUrl,
-          headers: {'Content-Type': 'application/json'},
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
+          sendTimeout: const Duration(seconds: 30),
         )) {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
-      
+        print('🚀 Request: ${options.method} ${options.uri}');
+        print('📤 Headers: ${options.headers}');
+        if (options.data != null) {
+          print('📦 Data: ${options.data}');
+        }
         handler.next(options);
       },
       onResponse: (response, handler) {
- 
+        print(
+            '✅ Response: ${response.statusCode} ${response.requestOptions.uri}');
+        print('📥 Data: ${response.data}');
         handler.next(response);
       },
       onError: (DioError e, handler) {
-        if (e.response != null) print('Response Data: ${e.response?.data}');
+        print('❌ Error: ${e.message}');
+        print('🔗 URL: ${e.requestOptions.uri}');
+        if (e.response != null) {
+          print('📊 Status: ${e.response?.statusCode}');
+          print('📥 Response Data: ${e.response?.data}');
+        }
         handler.next(e);
       },
     ));
@@ -134,7 +151,8 @@ class ApiService {
       } else if (e.type == DioErrorType.cancel) {
         return Exception('Request was cancelled.');
       } else {
-        return Exception('Network error. Please check your internet connection.');
+        return Exception(
+            'Network error. Please check your internet connection.');
       }
     }
   }
