@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <!--
+  <head>
+    <!--
     If you are serving your web app in a path other than the root, change the
     href value below to reflect the base path you are serving from.
 
@@ -14,70 +14,79 @@
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
   -->
-  <base href="$FLUTTER_BASE_HREF">
+    <base href="$FLUTTER_BASE_HREF" />
 
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+    <meta charset="UTF-8" />
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
+    <meta name="description" content="A new Flutter project." />
 
-  <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="theme-color" content="#ffffff">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="DhiGrowth">
-<link rel="apple-touch-icon" href="icons/Icon-192.png">
+    <!-- iOS meta tags & icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="DhiGrowth" />
+    <link rel="apple-touch-icon" href="icons/Icon-192.png" />
 
-  <meta name="apple-mobile-web-app-title" content="DhiGrowth">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+    <meta name="apple-mobile-web-app-title" content="DhiGrowth" />
+    <link rel="apple-touch-icon" href="icons/Icon-192.png" />
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png" />
 
-  <title>DhiGrowth</title>
-  <link rel="manifest" href="manifest.json">
+    <title>DhiGrowth</title>
+    <link rel="manifest" href="manifest.json" />
 
-  <script>
-    // The value below is injected by flutter build, do not touch.
-    var serviceWorkerVersion = null;
-  </script>
-  <script type="module">
-  // Import Firebase SDKs
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-  import { getMessaging } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging.js";
+    <script>
+      // The value below is injected by flutter build, do not touch.
+      var serviceWorkerVersion = "{{flutter_service_worker_version}}";
+    </script>
+    <script type="module">
+      // Import Firebase SDKs
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+      import { getMessaging } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging.js";
 
-  const firebaseConfig = {
-  apiKey: "AIzaSyDjmU9b7trS15dH-amLSYWf349Q0EIpbS0",
-  authDomain: "dhigrowth-hotal-managamenet.firebaseapp.com",
-  projectId: "dhigrowth-hotal-managamenet",
-  storageBucket: "dhigrowth-hotal-managamenet.firebasestorage.app",
-  messagingSenderId: "24097679071",
-  appId: "1:24097679071:web:09dce1e92aab1cf7e4ab6a",
-  measurementId: "G-SVN25C6H0P"
-};
+      const firebaseConfig = {
+        apiKey: "AIzaSyDjmU9b7trS15dH-amLSYWf349Q0EIpbS0",
+        authDomain: "dhigrowth-hotal-managamenet.firebaseapp.com",
+        projectId: "dhigrowth-hotal-managamenet",
+        storageBucket: "dhigrowth-hotal-managamenet.firebasestorage.app",
+        messagingSenderId: "24097679071",
+        appId: "1:24097679071:web:09dce1e92aab1cf7e4ab6a",
+        measurementId: "G-SVN25C6H0P",
+      };
 
-  const app = initializeApp(firebaseConfig);
-  const messaging = getMessaging(app);
-</script>
+      const app = initializeApp(firebaseConfig);
+      const messaging = getMessaging(app);
+    </script>
 
-  <!-- This script adds the flutter initialization JS code -->
-  <script src="flutter.js" defer></script>
-</head>
-<body>
-  <script>
-    window.addEventListener('load', function(ev) {
-      // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        }
-      }).then(function(engineInitializer) {
-        return engineInitializer.initializeEngine();
-      }).then(function(appRunner) {
-        return appRunner.runApp();
+    <!-- This script adds the flutter initialization JS code -->
+    <script src="flutter.js" defer></script>
+
+    <!-- Razorpay Checkout Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+  </head>
+  <body>
+    <script>
+      window.addEventListener("load", function (ev) {
+        // Download main.dart.js
+        _flutter.loader
+          .loadEntrypoint({
+            serviceWorker: {
+              serviceWorkerVersion: serviceWorkerVersion,
+            },
+          })
+          .then(function (engineInitializer) {
+            return engineInitializer.initializeEngine();
+          })
+          .then(function (appRunner) {
+            return appRunner.runApp();
+          });
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>

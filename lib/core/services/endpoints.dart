@@ -1,5 +1,5 @@
 class EndPoints {
-  static const String baseUrl = "http://localhost:5000/api/admin";
+  static const String baseUrl = "http://192.168.0.8:8000/api/admin";
 
   //--------------------customer----------
 //menu
@@ -7,7 +7,7 @@ class EndPoints {
   static const String getMenu = "$menu/getMenu";
 //order
   static const String customer = "$baseUrl/customer";
-  static const String createOrder = "$customer/createOrder";
+  static const String createOrder = "/orders/createOrder";
   static const String createCustomer = "$customer/createCustomer";
 
 //cart

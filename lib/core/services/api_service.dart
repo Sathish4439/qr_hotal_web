@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:ecommerce_flutter/core/services/endpoints.dart';
 
 class ApiService {
@@ -13,7 +14,8 @@ class ApiService {
           },
           connectTimeout: const Duration(seconds: 30),
           receiveTimeout: const Duration(seconds: 30),
-          sendTimeout: const Duration(seconds: 30),
+          // Only set sendTimeout for non-web platforms
+          sendTimeout: kIsWeb ? null : const Duration(seconds: 30),
         )) {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
@@ -145,8 +147,8 @@ class ApiService {
       return Exception(message);
     } else {
       if (e.type == DioErrorType.connectionTimeout ||
-          e.type == DioErrorType.sendTimeout ||
-          e.type == DioErrorType.receiveTimeout) {
+          e.type == DioErrorType.receiveTimeout ||
+          (!kIsWeb && e.type == DioErrorType.sendTimeout)) {
         return Exception('Connection timed out. Please try again.');
       } else if (e.type == DioErrorType.cancel) {
         return Exception('Request was cancelled.');

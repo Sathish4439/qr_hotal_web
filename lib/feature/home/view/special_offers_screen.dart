@@ -2,7 +2,6 @@ import 'package:ecommerce_flutter/feature/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_flutter/feature/home/view/widgets/app_bar.dart';
 import 'package:ecommerce_flutter/feature/home/view/widgets/special_offer_widget.dart';
-import 'package:ecommerce_flutter/feature/home/model/special_offer.dart';
 import 'package:get/get.dart';
 
 class SpecialOfferScreen extends StatefulWidget {

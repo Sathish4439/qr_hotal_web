@@ -12,6 +12,19 @@ class CartItemWid extends StatelessWidget {
     this.onQuantityChanged,
   });
 
+  // Helper method to calculate item price
+  double _calculateItemPrice(CartItem cartItem) {
+    // Calculate options price
+    double optionsPrice = cartItem.options.fold(
+      0.0,
+      (total, option) => total + (double.tryParse(option.extraPrice) ?? 0.0),
+    );
+
+    // Return (base price + options price) * quantity
+    return ((double.tryParse(cartItem.menuItem.price) ?? 0.0) + optionsPrice) *
+        cartItem.quantity;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
@@ -37,7 +50,7 @@ class CartItemWid extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        "₹${cartItem.totalPrice.toStringAsFixed(2)}",
+        "₹${_calculateItemPrice(cartItem).toStringAsFixed(2)}",
         style: const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,

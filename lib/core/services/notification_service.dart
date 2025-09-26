@@ -1,7 +1,3 @@
-import 'dart:developer';
-import 'dart:io';
-
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:ecommerce_flutter/core/common_wid/widget.dart';
 import 'package:ecommerce_flutter/core/services/endpoints.dart';
 import 'package:ecommerce_flutter/core/services/local_storage.dart';
@@ -10,7 +6,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -22,7 +17,7 @@ class PushService {
 
     if (kIsWeb) {
       // Ask user for permission on web
-      NotificationSettings settings = await messaging.requestPermission(
+      await messaging.requestPermission(
         alert: true,
         badge: true,
         sound: true,
@@ -61,7 +56,7 @@ class PushService {
       });
     } else {
       // Mobile (iOS/Android) FCM
-      NotificationSettings settings = await messaging.requestPermission(
+      await messaging.requestPermission(
         alert: true,
         badge: true,
         sound: true,
@@ -99,8 +94,4 @@ class PushService {
       });
     }
   }
-}
-
-Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
-  log('Background message: ${message.messageId}');
 }

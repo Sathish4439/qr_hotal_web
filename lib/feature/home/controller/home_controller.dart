@@ -1,4 +1,3 @@
-import 'package:ecommerce_flutter/core/common_wid/widget.dart';
 import 'package:ecommerce_flutter/core/services/api_service.dart';
 import 'package:ecommerce_flutter/core/services/endpoints.dart';
 import 'package:ecommerce_flutter/core/services/local_storage.dart';
@@ -28,27 +27,47 @@ class HomeController extends GetxController {
       menuList.clear();
 
       var res = await api.get(EndPoints.getMenu);
+      print("Menu API Response: ${res.data}");
 
-      if (res.data['success']) {
-        var li = (res.data['data'] as List)
-            .map((e) => MenuItem.fromJson(e))
-            .toList();
-
-        if (li.isNotEmpty) {
-          menuList.value = li;
-
-          // ✅ Get unique categories (ignores nulls)
-          categories.value = menuList
-              .map((p0) => p0.category)
-              .whereType<String>() // removes nulls
-              .toSet()
+      if (res.data is Map<String, dynamic> && res.data['success'] == true) {
+        var data = res.data['data'];
+        if (data is List) {
+          var li = data
+              .map((e) {
+                try {
+                  return MenuItem.fromJson(e);
+                } catch (parseError) {
+                  print("Error parsing menu item: $parseError");
+                  print("Problematic data: $e");
+                  return null;
+                }
+              })
+              .where((item) => item != null)
+              .cast<MenuItem>()
               .toList();
 
-          print("menuList lenghth ${menuList.length}");
-        } else {}
+          if (li.isNotEmpty) {
+            menuList.value = li;
+
+            // ✅ Get unique categories (ignores nulls)
+            categories.value = menuList
+                .map((p0) => p0.category)
+                .whereType<String>() // removes nulls
+                .toSet()
+                .toList();
+
+            print("menuList length ${menuList.length}");
+          } else {
+            print("No valid menu items found");
+          }
+        } else {
+          print("Menu data is not a list: ${data.runtimeType}");
+        }
+      } else {
+        print("Menu API failed: ${res.data}");
       }
     } catch (e) {
-      debugPrint("Error: $e");
+      debugPrint("Error fetching menu: $e");
     } finally {
       loadMenu(false);
       sendTokenToBackend();
@@ -62,11 +81,9 @@ class HomeController extends GetxController {
 
       var data = {"fcmToken": token};
 
-     
-
       var res = await api.post(EndPoints.createCustomer, data: data);
 
-      if (res.statusCode == 200 && res.data['success']) {
+      if (res.statusCode == 200 && res.data['success'] == true) {
         var customerId = res.data['data']['id'].toString();
 
         if (customerId.isNotEmpty) {

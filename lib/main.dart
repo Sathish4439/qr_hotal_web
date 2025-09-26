@@ -1,12 +1,10 @@
-import 'package:ecommerce_flutter/core/services/endpoints.dart';
 import 'package:ecommerce_flutter/core/services/notification_service.dart';
+import 'package:ecommerce_flutter/core/services/razorpay_service.dart';
 import 'package:ecommerce_flutter/core/theme/app_theme.dart';
 import 'package:ecommerce_flutter/feature/home/view/tabbar.dart';
 import 'package:ecommerce_flutter/firebase_options.dart';
 import 'package:ecommerce_flutter/utils/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:toastification/toastification.dart';
@@ -14,19 +12,19 @@ import 'package:toastification/toastification.dart';
 // Global variable to use anywhere
 String? tableId;
 
-// Background FCM handler
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint("Handling a background message: ${message.messageId}");
-}
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _extractHotelAndTable();
+
+  // Initialize Firebase
   await Firebase.initializeApp(
-    options:
-        DefaultFirebaseOptions.currentPlatform, // from firebase_options.dart
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Initialize Razorpay
+  await RazorpayService.initialize();
+
+  // Initialize notification service
   await PushService().initFCM();
 
   runApp(const EcommerceFlutterApp());

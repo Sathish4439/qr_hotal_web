@@ -1,8 +1,6 @@
 import 'dart:ui';
 
 import 'package:ecommerce_flutter/core/theme/app_color.dart';
-import 'package:ecommerce_flutter/core/theme/app_font.dart';
-import 'package:ecommerce_flutter/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:toastification/toastification.dart';

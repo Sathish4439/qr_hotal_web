@@ -1,15 +1,11 @@
 import 'dart:ui';
 
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecommerce_flutter/core/common_wid/widget.dart';
 import 'package:ecommerce_flutter/core/theme/app_color.dart';
 import 'package:ecommerce_flutter/core/theme/app_font.dart';
 import 'package:ecommerce_flutter/feature/home/controller/home_controller.dart';
-import 'package:ecommerce_flutter/feature/home/model/menu_item.dart';
 import 'package:ecommerce_flutter/feature/home/view/widgets/search_field.dart';
-import 'package:ecommerce_flutter/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:ecommerce_flutter/feature/home/view/widgets/special_offer_widget.dart';
 
 import 'package:ecommerce_flutter/feature/home/view/most_popular_screen.dart';
 import 'package:flutter/widgets.dart';
@@ -120,7 +116,7 @@ class _SpecialOffersState extends State<SpecialOffers> {
                 itemBuilder: ((context, index) {
                   final data = controller.categories[index];
 
-                      return CategoryWid(data: data);
+                  return CategoryWid(data: data);
                   //  CategoryWid(data: data);
                 }),
               ))
@@ -140,39 +136,7 @@ class _SpecialOffersState extends State<SpecialOffers> {
               fontSize: 20,
               color: Color(0xFF212121)),
         ),
-       
       ],
-    );
-  }
-
-  Widget _buildPageIndicator() {
-    List<Widget> list = [];
-    for (int i = 0; i < controller.menuList.length; i++) {
-      list.add(i == controller.menuList ? _indicator(true) : _indicator(false));
-    }
-    return Container(
-      height: 250,
-      alignment: Alignment.bottomCenter,
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: list,
-      ),
-    );
-  }
-
-  Widget _indicator(bool isActive) {
-    return SizedBox(
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        margin: const EdgeInsets.symmetric(horizontal: 5.0),
-        height: 4.0,
-        width: isActive ? 16 : 4.0,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(2)),
-          color: isActive ? const Color(0XFF101010) : const Color(0xFFBDBDBD),
-        ),
-      ),
     );
   }
 }

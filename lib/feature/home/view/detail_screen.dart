@@ -6,8 +6,6 @@ import 'package:ecommerce_flutter/core/theme/app_font.dart';
 import 'package:ecommerce_flutter/feature/home/controller/order_controller.dart';
 import 'package:ecommerce_flutter/feature/home/model/menu_item.dart';
 import 'package:ecommerce_flutter/feature/home/view/cart_screen.dart';
-import 'package:ecommerce_flutter/feature/home/view/widgets/app_bar.dart';
-import 'package:ecommerce_flutter/utils/size_config.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,9 +30,14 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.totalPrice.value = 0;
+      // Reset controller state for this product
+      controller.reset();
+      controller.quantity.value = 1;
       controller.selectedOptions.clear();
-      controller.calculatePrice(double.parse(widget.product.price));
+
+      // Calculate initial price
+      double basePrice = double.tryParse(widget.product.price) ?? 0.0;
+      controller.calculatePrice(basePrice);
     });
 
     _scrollController.addListener(() {
@@ -94,6 +97,59 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                               : Colors.white),
                     ),
                   ),
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        Get.to(() => const CartScreen());
+                      },
+                      icon: Stack(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.white
+                                  .withOpacity(0.8 * _appBarOpacity),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.shopping_cart,
+                                color: _appBarOpacity > 0.5
+                                    ? Colors.black
+                                    : Colors.white),
+                          ),
+                          Obx(() {
+                            int cartItemCount = controller.cartItems.length;
+                            if (cartItemCount > 0) {
+                              return Positioned(
+                                right: 0,
+                                top: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  child: Text(
+                                    '$cartItemCount',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          }),
+                        ],
+                      ),
+                    ),
+                  ],
                   flexibleSpace: FlexibleSpaceBar(
                     collapseMode: CollapseMode.parallax,
                     background: Stack(
@@ -133,7 +189,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Category tag
-                        if (product.category != null) ...[
+                        if (product.category.isNotEmpty) ...[
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
@@ -142,7 +198,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Text(
-                              product.category!,
+                              product.category,
                               style: AppFonts.captionStyle(
                                   color: AppColors.secondaryLight),
                             ),
@@ -187,47 +243,6 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
             _buildBottomBar(product),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildAppBar(MenuItem product) {
-    return Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      child: AppBar(
-        backgroundColor: Colors.white.withOpacity(_appBarOpacity),
-        elevation: _appBarOpacity > 0.5 ? 2 : 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back,
-              color: _appBarOpacity > 0.5 ? Colors.black : Colors.white),
-        ),
-        title: _appBarOpacity > 0.5
-            ? Text(product.name,
-                style: AppFonts.subHeadingStyle(color: AppColors.textBlack),
-                overflow: TextOverflow.ellipsis)
-            : const SizedBox.shrink(),
-        centerTitle: true,
-        actions: [
-          GestureDetector(
-              onTap: () {
-                Get.to(() => CartScreen());
-              },
-              child: GradientIcon(
-                Icons.shopping_bag_rounded,
-                size: 40,
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    AppColors.secondary,
-                    AppColors.secondaryLight,
-                  ],
-                ),
-              ))
-        ],
       ),
     );
   }
@@ -347,7 +362,8 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                     style: AppFonts.bodyStyle(color: AppColors.secondaryLight)),
                 value: isSelected,
                 onChanged: (val) {
-                  controller.toggleOption(option, double.parse(product.price));
+                  double basePrice = double.tryParse(product.price) ?? 0.0;
+                  controller.toggleOption(option, basePrice);
                 },
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -411,8 +427,9 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                       onTap: () {
                         if (controller.quantity.value > 1) {
                           controller.quantity.value--;
-                          controller
-                              .calculatePrice(double.parse(product.price));
+                          double basePrice =
+                              double.tryParse(product.price) ?? 0.0;
+                          controller.calculatePrice(basePrice);
                         }
                       },
                     ),
@@ -433,7 +450,9 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                       ),
                       onTap: () {
                         controller.quantity.value++;
-                        controller.calculatePrice(double.parse(product.price));
+                        double basePrice =
+                            double.tryParse(product.price) ?? 0.0;
+                        controller.calculatePrice(basePrice);
                       },
                     ),
                   ],
@@ -500,29 +519,58 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
   Widget _buildAddToCartButton() {
     return SizedBox(
       width: 180,
-      child: ElevatedButton(
-        onPressed: () async {
-          print("tabbed");
-          await controller.addToCart(widget.product, controller.quantity.value, controller.selectedOptions ,controller.totalPrice.value);
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.secondaryLight,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 0,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.shopping_cart_outlined, size: 20),
-            const SizedBox(width: 8),
-            Text('Add to Cart', style: AppFonts.bodyStyle(color: Colors.white)),
-          ],
-        ),
-      ),
+      child: Obx(() => ElevatedButton(
+            onPressed: controller.isLoading.value
+                ? null
+                : () async {
+                    try {
+                      print("Adding to cart...");
+                      await controller.addToCart(
+                          widget.product,
+                          controller.quantity.value,
+                          controller.selectedOptions,
+                          controller.totalPrice.value);
+
+                      // Reset form after successful add
+                      controller.reset();
+                      controller.quantity.value = 1;
+                      controller.selectedOptions.clear();
+                      double basePrice =
+                          double.tryParse(widget.product.price) ?? 0.0;
+                      controller.calculatePrice(basePrice);
+                    } catch (e) {
+                      print("Error adding to cart: $e");
+                      // Error handling is done in the controller
+                    }
+                  },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.secondaryLight,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 0,
+            ),
+            child: controller.isLoading.value
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.shopping_cart_outlined, size: 20),
+                      const SizedBox(width: 8),
+                      Text('Add to Cart',
+                          style: AppFonts.bodyStyle(color: Colors.white)),
+                    ],
+                  ),
+          )),
     );
   }
 }

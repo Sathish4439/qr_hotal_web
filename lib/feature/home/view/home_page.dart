@@ -1,12 +1,9 @@
 import 'package:ecommerce_flutter/core/theme/app_color.dart';
 import 'package:ecommerce_flutter/feature/home/controller/home_controller.dart';
-import 'package:ecommerce_flutter/feature/home/model/menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_flutter/feature/home/view/widgets/product_card.dart';
 import 'package:ecommerce_flutter/feature/home/view/detail_screen.dart';
-import 'package:ecommerce_flutter/feature/home/view/widgets/hearder.dart';
 import 'package:ecommerce_flutter/feature/home/view/widgets/most_popular.dart';
-import 'package:ecommerce_flutter/feature/home/view/widgets/search_field.dart';
 import 'package:ecommerce_flutter/feature/home/view/widgets/special_offer.dart';
 import 'package:ecommerce_flutter/feature/home/view/most_popular_screen.dart';
 import 'package:ecommerce_flutter/feature/home/view/special_offers_screen.dart';

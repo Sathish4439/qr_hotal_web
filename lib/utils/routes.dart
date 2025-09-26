@@ -1,6 +1,4 @@
-import 'package:ecommerce_flutter/feature/home/model/menu_item.dart';
 import 'package:flutter/material.dart';
-import 'package:ecommerce_flutter/feature/home/view/detail_screen.dart';
 import 'package:ecommerce_flutter/feature/home/view/home_page.dart';
 import 'package:ecommerce_flutter/feature/home/view/most_popular_screen.dart';
 import 'package:ecommerce_flutter/feature/home/view/profile_screen.dart';
