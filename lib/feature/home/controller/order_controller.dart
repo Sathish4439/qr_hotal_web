@@ -3,6 +3,7 @@ import 'package:ecommerce_flutter/core/services/api_service.dart';
 import 'package:ecommerce_flutter/core/services/endpoints.dart';
 import 'package:ecommerce_flutter/core/services/local_storage.dart';
 import 'package:ecommerce_flutter/feature/home/model/cartModel.dart';
+import 'package:ecommerce_flutter/feature/home/model/order_model.dart';
 import 'package:get/get.dart';
 import 'package:ecommerce_flutter/feature/home/model/menu_item.dart';
 
@@ -17,6 +18,10 @@ class OrderController extends GetxController {
 
   var isLoading = false.obs;
   var cartItems = <CartItem>[].obs;
+
+  // Orders
+  var isLoadingOrders = false.obs;
+  var ordersList = <OrderModel>[].obs;
 
   // ✅ Calculate total price with options
   void calculatePrice(double basePrice) {
@@ -234,6 +239,10 @@ class OrderController extends GetxController {
         return;
       }
 
+      // Get customer ID
+      var customerId =
+          await SecureStorageHelper.readValue(SecureStorageHelper.keyUserId);
+
       // Prepare order items from cart
       List<Map<String, dynamic>> orderItems = cartItems.map((cartItem) {
         return {
@@ -245,6 +254,7 @@ class OrderController extends GetxController {
 
       var body = {
         "tableId": tableId,
+        "customerId": customerId != null ? int.parse(customerId) : null,
         "items": orderItems,
         "paymentMethod": paymentMethod,
       };
@@ -258,7 +268,6 @@ class OrderController extends GetxController {
         successToastWidget(message);
 
         // Clear cart after successful order creation
-        await clearCart();
 
         // Navigate to order confirmation or home
         Get.offAllNamed('/home');
@@ -269,7 +278,52 @@ class OrderController extends GetxController {
       print("Error creating order: $e");
       errorToastWidget("Failed to create order. Please try again.");
     } finally {
+      await clearCart();
       isLoading.value = false;
+    }
+  }
+
+  // ✅ Fetch orders by customer ID
+  Future<void> fetchOrdersByCustomerId(int customerId) async {
+    try {
+      isLoadingOrders.value = true;
+
+      var res = await api.get("${EndPoints.getOrdersByCustomerId}/$customerId");
+
+      if (res.data['success'] == true) {
+        var data = res.data['data'] as List;
+        ordersList.value = data.map((e) => OrderModel.fromJson(e)).toList();
+        print("Orders fetched: ${ordersList.length}");
+      } else {
+        errorToastWidget(res.data['message'] ?? 'Failed to fetch orders');
+      }
+    } catch (e) {
+      print("Error fetching orders: $e");
+      errorToastWidget("Failed to fetch orders. Please try again.");
+    } finally {
+      isLoadingOrders.value = false;
+    }
+  }
+
+  // ✅ Fetch all orders (for admin/waiter)
+  Future<void> fetchAllOrders() async {
+    try {
+      isLoadingOrders.value = true;
+
+      var res = await api.get(EndPoints.orders);
+
+      if (res.data['success'] == true) {
+        var data = res.data['data'] as List;
+        ordersList.value = data.map((e) => OrderModel.fromJson(e)).toList();
+        print("All orders fetched: ${ordersList.length}");
+      } else {
+        errorToastWidget(res.data['message'] ?? 'Failed to fetch orders');
+      }
+    } catch (e) {
+      print("Error fetching all orders: $e");
+      errorToastWidget("Failed to fetch orders. Please try again.");
+    } finally {
+      isLoadingOrders.value = false;
     }
   }
 }

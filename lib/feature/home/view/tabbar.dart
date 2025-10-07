@@ -1,4 +1,5 @@
 import 'package:ecommerce_flutter/feature/home/view/cart_screen.dart';
+import 'package:ecommerce_flutter/feature/home/view/orders_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_flutter/utils/image_loader.dart';
@@ -38,8 +39,8 @@ class _FRTabbarScreenState extends State<FRTabbarScreen> {
     const HomeScreen(
       title: '首页0',
     ),
-    //const TestScreen(title: 'Cart'),
     const CartScreen(),
+    const OrdersScreen(), // Orders screen
     // const TestScreen(title: 'Wallet'),
     // const ProfileScreen(),
   ];
@@ -58,11 +59,11 @@ class _FRTabbarScreenState extends State<FRTabbarScreen> {
       activeIcon: generateIcon('bold/Home@2x.png'),
       label: 'Home',
     ),
-    // BottomNavigationBarItem(
-    //   icon: generateIcon('light/Bag@2x.png'),
-    //   activeIcon: generateIcon('bold/Bag@2x.png'),
-    //   label: 'Cart',
-    // ),
+    BottomNavigationBarItem(
+      icon: generateIcon('light/Bag@2x.png'),
+      activeIcon: generateIcon('bold/Bag@2x.png'),
+      label: 'Cart',
+    ),
     BottomNavigationBarItem(
       icon: generateIcon('light/Buy@2x.png'),
       activeIcon: generateIcon('bold/Buy@2x.png'),
@@ -88,11 +89,20 @@ class _FRTabbarScreenState extends State<FRTabbarScreen> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    print("FRTabbarScreen building with _select: $_select");
+    print("Screens length: ${screens.length}");
+    print("Items length: ${items.length}");
+
     return Scaffold(
+      backgroundColor: Colors.white,
       body: screens[_select],
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: items,
-        onTap: ((value) => setState(() => _select = value)),
+        onTap: ((value) {
+          print("Tab tapped: $value");
+          setState(() => _select = value);
+        }),
         currentIndex: _select,
         selectedLabelStyle: const TextStyle(
           fontWeight: FontWeight.bold,
@@ -105,6 +115,8 @@ class _FRTabbarScreenState extends State<FRTabbarScreen> {
         ),
         selectedItemColor: const Color(0xFF212121),
         unselectedItemColor: const Color(0xFF9E9E9E),
+        backgroundColor: Colors.white,
+        elevation: 8,
       ),
     );
   }

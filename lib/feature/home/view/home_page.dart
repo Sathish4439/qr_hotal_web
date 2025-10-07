@@ -7,6 +7,7 @@ import 'package:ecommerce_flutter/feature/home/view/widgets/most_popular.dart';
 import 'package:ecommerce_flutter/feature/home/view/widgets/special_offer.dart';
 import 'package:ecommerce_flutter/feature/home/view/most_popular_screen.dart';
 import 'package:ecommerce_flutter/feature/home/view/special_offers_screen.dart';
+import 'package:ecommerce_flutter/feature/home/view/widgets/hearder.dart';
 import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,6 +35,12 @@ class _HomeScreenState extends State<HomeScreen> {
     const padding = EdgeInsets.fromLTRB(24, 24, 24, 0);
     return Scaffold(
       backgroundColor: AppColors.background,
+      // appBar: AppBar(
+      //   backgroundColor: AppColors.background,
+      //   elevation: 0,
+      //   automaticallyImplyLeading: false,
+      //   title: const HomeAppBar(),
+      // ),
       body: CustomScrollView(
         slivers: <Widget>[
           SliverPadding(
@@ -49,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: padding,
             sliver: _buildPopulars(),
           ),
-          //  const SliverAppBar(flexibleSpace: SizedBox(height: 24))
+          // const SliverAppBar(flexibleSpace: SizedBox(height: 24))
         ],
       ),
     );

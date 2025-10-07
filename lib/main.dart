@@ -46,7 +46,7 @@ class EcommerceFlutterApp extends StatelessWidget {
       child: GetMaterialApp(
         title: 'DhiGrowth',
         theme: AppTheme.lightTheme,
-        routes: routes,
+       // routes: routes,
         debugShowCheckedModeBanner: false,
         home: const FRTabbarScreen(),
       ),

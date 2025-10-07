@@ -1,5 +1,6 @@
 import 'package:ecommerce_flutter/core/common_wid/widget.dart';
 import 'package:ecommerce_flutter/core/services/razorpay_service.dart';
+import 'package:ecommerce_flutter/core/theme/app_color.dart';
 import 'package:ecommerce_flutter/feature/home/controller/order_controller.dart';
 import 'package:ecommerce_flutter/feature/home/model/cartModel.dart';
 import 'package:ecommerce_flutter/feature/home/view/tabbar.dart';
@@ -7,7 +8,6 @@ import 'package:ecommerce_flutter/feature/home/view/widgets/app_bar.dart';
 import 'package:ecommerce_flutter/feature/home/view/widgets/cart_item.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ecommerce_flutter/main.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -210,11 +210,27 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildCheckoutButton() {
-    return SizedBox(
+    return Container(
       width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF4CAF50), Color(0xFF45A049)],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.green.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -223,10 +239,24 @@ class _CartScreenState extends State<CartScreen> {
         onPressed: () {
           _showPaymentOptions();
         },
-        child: const Text(
-          "Proceed to Checkout",
-          style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.shopping_cart_checkout,
+              color: Colors.white,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              "Proceed to Checkout",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -286,45 +316,75 @@ class _CartScreenState extends State<CartScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
           padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Handle bar
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+
               const Text(
                 "Choose Payment Method",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
               ),
               const SizedBox(height: 20),
 
               // UPI Payment Option
-              ListTile(
-                leading: const Icon(Icons.account_balance_wallet,
-                    color: Colors.purple),
-                title: const Text("UPI Payment"),
-                subtitle: const Text("Pay using UPI apps"),
+              _buildPaymentOption(
+                icon: Icons.account_balance_wallet,
+                iconColor: Colors.purple,
+                title: "UPI Payment",
+                subtitle: "Pay using UPI apps",
                 onTap: () {
                   Navigator.pop(context);
                   _initiateUpiPayment();
                 },
               ),
 
+              const SizedBox(height: 12),
+
               // Credit/Debit Card
-              ListTile(
-                leading: const Icon(Icons.credit_card, color: Colors.blue),
-                title: const Text("Credit/Debit Card"),
-                subtitle: const Text("Pay using card"),
+              _buildPaymentOption(
+                icon: Icons.credit_card,
+                iconColor: Colors.blue,
+                title: "Credit/Debit Card",
+                subtitle: "Pay using card",
                 onTap: () {
-                  // Implement card payment
+                  Navigator.pop(context);
+                  _initiateCardPayment();
                 },
               ),
 
+              const SizedBox(height: 12),
+
               // Cash on Delivery
-              ListTile(
-                leading: const Icon(Icons.local_atm, color: Colors.green),
-                title: const Text("Cash on Delivery"),
-                subtitle: const Text("Pay when you receive"),
+              _buildPaymentOption(
+                icon: Icons.local_atm,
+                iconColor: Colors.green,
+                title: "Cash on Delivery",
+                subtitle: "Pay when you receive",
                 onTap: () {
                   Navigator.pop(context);
                   _initiateCodPayment();
@@ -417,7 +477,7 @@ class _CartScreenState extends State<CartScreen> {
 
     // Get table ID from global variable (extracted from URL)
     final currentTableId = "1";
-    if (currentTableId == null || currentTableId.isEmpty) {
+    if (currentTableId.isEmpty) {
       Get.snackbar(
         "Table Not Found",
         "Unable to identify table. Please scan QR code again.",
@@ -495,5 +555,120 @@ class _CartScreenState extends State<CartScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildPaymentOption({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border.withOpacity(0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            color: iconColor,
+            size: 24,
+          ),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: const TextStyle(
+            fontSize: 14,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: AppColors.textSecondary,
+        ),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  void _initiateCardPayment() async {
+    final controller = Get.find<OrderController>();
+
+    if (controller.cartItems.isEmpty) {
+      Get.snackbar(
+        "Empty Cart",
+        "Please add items to cart before proceeding",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    // Generate order ID
+    final orderId = "order_${DateTime.now().millisecondsSinceEpoch}";
+
+    // Get customer details
+    final customerName = "Restaurant Customer";
+    final customerEmail = "customer@restaurant.com";
+    final customerPhone = "9876543210";
+
+    // Show loading indicator
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(),
+      ),
+      barrierDismissible: false,
+    );
+
+    try {
+      // Use Razorpay service for card payment
+      await RazorpayService.openCheckout(
+        amount: controller.totalPrice.value,
+        orderId: orderId,
+        customerName: customerName,
+        customerEmail: customerEmail,
+        customerPhone: customerPhone,
+      );
+    } catch (e) {
+      print("Error initiating card payment: $e");
+      Get.snackbar(
+        "Payment Error",
+        "Failed to initiate payment. Please try again.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      // Close loading dialog
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+    }
   }
 }

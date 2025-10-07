@@ -7,7 +7,9 @@ class EndPoints {
   static const String getMenu = "$menu/getMenu";
 //order
   static const String customer = "$baseUrl/customer";
-  static const String createOrder = "/orders/createOrder";
+  static const String orders = "$baseUrl/orders";
+  static const String createOrder = "$baseUrl/orders/createOrder";
+  static const String getOrdersByCustomerId = "$baseUrl/orders/getOrdersByCustomerId";
   static const String createCustomer = "$customer/createCustomer";
 
 //cart
@@ -16,7 +18,7 @@ class EndPoints {
   static const String getCart = "$cart/getCart";
   static const String deleteCart = "$cart/deleteCart";
   static const String updateCart = "$cart/updateCart";
-  static const String clearCart = "$cart/clearCart";
+  static const String clearCart = "$baseUrl/orders/clearCart";
 
 //fcm
   static const String vapKey =
